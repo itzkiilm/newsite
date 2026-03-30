@@ -1,7 +1,1 @@
-{
-  "name": "uv-proxy",
-  "version": "1.0.0",
-  "dependencies": {
-    "@titaniumnetwork-dev/ultraviolet": "^2.0.0"
-  }
-}
+
