@@ -12,7 +12,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family: "Segoe UI", sans-serif;
+font-family:"Segoe UI",sans-serif;
 }
 
 body{
@@ -26,7 +26,7 @@ justify-content:center;
 flex-direction:column;
 }
 
-/* particle canvas */
+/* particles */
 
 canvas{
 position:fixed;
@@ -41,11 +41,9 @@ z-index:-1;
 font-size:42px;
 font-weight:600;
 margin-bottom:25px;
-letter-spacing:1px;
-opacity:.95;
 }
 
-/* search box */
+/* search */
 
 .search-container{
 display:flex;
@@ -84,6 +82,16 @@ background:#00c6d9;
 box-shadow:0 0 10px rgba(0,255,255,.6);
 }
 
+/* credits */
+
+.credits{
+position:fixed;
+bottom:15px;
+right:20px;
+font-size:14px;
+opacity:.7;
+}
+
 </style>
 
 </head>
@@ -103,59 +111,68 @@ box-shadow:0 0 10px rgba(0,255,255,.6);
 
 </div>
 
+<div class="credits">Site made by bo</div>
+
 <script>
 
-/* SEARCH FUNCTION */
+/* SEARCH */
 
-document.getElementById("proxyForm").addEventListener("submit", function(e){
+document.getElementById("proxyForm").addEventListener("submit",function(e){
 
 e.preventDefault()
 
-let url = document.getElementById("urlInput").value.trim()
+let input=document.getElementById("urlInput").value.trim()
 
-if(!url.startsWith("http")){
-url = "https://www.google.com/search?q=" + encodeURIComponent(url)
+if(!input)return
+
+let url
+
+if(input.startsWith("http://")||input.startsWith("https://")){
+url=input
+}else if(input.includes(".")){
+url="https://"+input
+}else{
+url="https://www.google.com/search?q="+encodeURIComponent(input)
 }
 
-/* change this if using ultraviolet */
+/* ultraviolet encoded route */
 
-window.location.href = "/service/" + url
+window.location.href="/service/"+encodeURIComponent(url)
 
 })
 
 /* PARTICLES */
 
-const canvas = document.getElementById("particles")
-const ctx = canvas.getContext("2d")
+const canvas=document.getElementById("particles")
+const ctx=canvas.getContext("2d")
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
 
-window.addEventListener("resize", ()=>{
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+window.addEventListener("resize",()=>{
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
 })
 
 class Particle{
 
 constructor(){
-this.x = Math.random()*canvas.width
-this.y = Math.random()*canvas.height
-this.size = Math.random()*2+1
-this.speed = Math.random()*1+.2
+this.x=Math.random()*canvas.width
+this.y=Math.random()*canvas.height
+this.size=Math.random()*2+1
+this.speed=Math.random()*1+.2
 }
 
 update(){
-this.y -= this.speed
-
-if(this.y < 0){
-this.y = canvas.height
-this.x = Math.random()*canvas.width
+this.y-=this.speed
+if(this.y<0){
+this.y=canvas.height
+this.x=Math.random()*canvas.width
 }
 }
 
 draw(){
-ctx.fillStyle = "rgba(0,255,255,.8)"
+ctx.fillStyle="rgba(0,255,255,.8)"
 ctx.beginPath()
 ctx.arc(this.x,this.y,this.size,0,Math.PI*2)
 ctx.fill()
@@ -170,7 +187,6 @@ particles.push(new Particle())
 }
 
 function animate(){
-
 ctx.clearRect(0,0,canvas.width,canvas.height)
 
 particles.forEach(p=>{
@@ -179,7 +195,6 @@ p.draw()
 })
 
 requestAnimationFrame(animate)
-
 }
 
 animate()
