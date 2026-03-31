@@ -1,16 +1,16 @@
 {
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "^/service/(.*)",
       "dest": "/api/uv.js"
     },
     {
-      "src": "/uv/(.*)",
+      "src": "^/api/(.*)",
+      "dest": "/api/uv.js"
+    },
+    {
+      "src": "^/uv/(.*)",
       "dest": "/uv/$1"
-    },
-    {
-      "src": "/service/(.*)",
-      "dest": "/api/uv.js"
     }
   ]
 }
