@@ -307,7 +307,7 @@ function go() {
     url = "https://www.google.com/search?q=" + encodeURIComponent(input);
   }
 
-  window.location.href = BACKEND + "/service/?url=" + encodeURIComponent(url);
+  window.location.href = BACKEND + "/service/" + encodeURIComponent(url);
 }
 
 document.getElementById("urlInput").addEventListener("keydown", e => {
