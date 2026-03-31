@@ -3,299 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bos Proxy</title>
+<title>BosProxy</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-
-<!-- Ultraviolet client loaded from your PC backend -->
-<script src="https://riders-isaac-shipped-july.trycloudflare.com/uv/uv.bundle.js"></script>
-<script src="https://riders-isaac-shipped-july.trycloudflare.com/uv/uv.config.js"></script>
-
 <style>
-
 :root {
   --teal: #00f5ff;
   --teal2: #00b4d8;
   --bg: #020e10;
 }
-
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; background:var(--bg); color:#fff; font-family:'Space Mono',monospace; overflow:hidden; }
 
-html, body {
-  height: 100%;
-  background: var(--bg);
-  color: #fff;
-  font-family: 'Space Mono', monospace;
-  overflow: hidden;
-}
-
-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
-
-.gradient-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
+/* BG */
+canvas { position:fixed; inset:0; z-index:0; }
+.gbg {
+  position:fixed; inset:0; z-index:1; pointer-events:none;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,180,216,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,245,255,0.07) 0%, transparent 70%);
-  pointer-events: none;
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(0,180,216,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% -10%, rgba(0,245,255,0.07) 0%, transparent 70%);
 }
-
 .grid {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  background-image:
-    linear-gradient(rgba(0,245,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,245,255,0.025) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background-image:linear-gradient(rgba(0,245,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,.025) 1px,transparent 1px);
+  background-size:60px 60px;
 }
+.vig { position:fixed; inset:0; z-index:2; pointer-events:none; background:radial-gradient(ellipse at center,transparent 35%,#020e10 100%); }
 
-.vignette {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  background: radial-gradient(ellipse at center, transparent 35%, #020e10 100%);
-  pointer-events: none;
-}
+/* CORNERS */
+.c { position:fixed; z-index:5; width:60px; height:60px; pointer-events:none; opacity:.25; }
+.c.tl { top:18px; left:18px; border-top:1px solid var(--teal); border-left:1px solid var(--teal); }
+.c.tr { top:18px; right:18px; border-top:1px solid var(--teal); border-right:1px solid var(--teal); }
+.c.bl { bottom:18px; left:18px; border-bottom:1px solid var(--teal); border-left:1px solid var(--teal); }
+.c.br { bottom:18px; right:18px; border-bottom:1px solid var(--teal); border-right:1px solid var(--teal); }
 
-.corner {
-  position: fixed;
-  z-index: 5;
-  width: 70px;
-  height: 70px;
-  pointer-events: none;
-  opacity: 0.3;
-}
-.corner.tl { top:20px; left:20px; border-top:1px solid var(--teal); border-left:1px solid var(--teal); }
-.corner.tr { top:20px; right:20px; border-top:1px solid var(--teal); border-right:1px solid var(--teal); }
-.corner.bl { bottom:20px; left:20px; border-bottom:1px solid var(--teal); border-left:1px solid var(--teal); }
-.corner.br { bottom:20px; right:20px; border-bottom:1px solid var(--teal); border-right:1px solid var(--teal); }
-
-.stage {
-  position: relative;
-  z-index: 10;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+/* MAIN STAGE */
+.stage { position:relative; z-index:10; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 
 /* LOGO */
-.logo-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 52px;
-  animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) both;
+.logo { display:flex; flex-direction:column; align-items:center; margin-bottom:48px; animation:up .9s cubic-bezier(.16,1,.3,1) both; }
+.logo svg { width:56px; height:56px; margin-bottom:18px; filter:drop-shadow(0 0 20px rgba(0,245,255,.85)); }
+.logo h1 {
+  font-family:'Syne',sans-serif; font-size:clamp(38px,6vw,66px); font-weight:800; letter-spacing:-1px; line-height:1;
+  background:linear-gradient(135deg,#fff 0%,#00f5ff 55%,#00b4d8 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter:drop-shadow(0 0 24px rgba(0,245,255,.35));
+}
+.logo p {
+  margin-top:11px; font-size:10px; letter-spacing:4px; text-transform:uppercase;
+  background:linear-gradient(90deg,#00b4d8,#00f5ff);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 
-.logo-icon {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 20px;
+/* MAIN SEARCH */
+.search { width:min(520px,90vw); animation:up .9s .12s cubic-bezier(.16,1,.3,1) both; }
+.sbox {
+  display:flex; align-items:center;
+  background:linear-gradient(135deg,rgba(0,245,255,.07),rgba(0,180,216,.12));
+  border:1px solid rgba(0,245,255,.3); border-radius:13px;
+  padding:6px 6px 6px 18px; backdrop-filter:blur(16px);
+  transition:border-color .2s, box-shadow .2s;
 }
-
-.logo-icon svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 22px rgba(0,245,255,0.85));
+.sbox:focus-within { border-color:rgba(0,245,255,.8); box-shadow:0 0 0 3px rgba(0,245,255,.08),0 0 46px rgba(0,245,255,.18); }
+.sbox input { flex:1; background:none; border:none; outline:none; color:#fff; font-family:'Space Mono',monospace; font-size:14px; padding:10px 0; caret-color:var(--teal); }
+.sbox input::placeholder { color:rgba(255,255,255,.35); }
+.btn {
+  flex-shrink:0; background:linear-gradient(135deg,#00f5ff,#00b4d8); color:#020e10;
+  border:none; border-radius:8px; font-family:'Syne',sans-serif; font-weight:800;
+  font-size:12px; letter-spacing:2px; padding:11px 22px; cursor:pointer;
+  transition:opacity .15s, box-shadow .15s, transform .1s;
 }
-
-.logo-title {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(40px, 6vw, 68px);
-  font-weight: 800;
-  letter-spacing: -1px;
-  line-height: 1;
-  background: linear-gradient(135deg, #ffffff 0%, #00f5ff 55%, #00b4d8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 28px rgba(0,245,255,0.35));
-}
-
-.logo-sub {
-  margin-top: 13px;
-  font-size: 11px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  background: linear-gradient(90deg, #00b4d8, #00f5ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* SEARCH */
-.search-wrap {
-  width: min(540px, 90vw);
-  animation: fadeUp 0.9s 0.12s cubic-bezier(0.16,1,0.3,1) both;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, rgba(0,245,255,0.07), rgba(0,180,216,0.12));
-  border: 1px solid rgba(0,245,255,0.3);
-  border-radius: 14px;
-  padding: 6px 6px 6px 20px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  backdrop-filter: blur(16px);
-}
-
-.search-box:focus-within {
-  border-color: rgba(0,245,255,0.8);
-  box-shadow: 0 0 0 3px rgba(0,245,255,0.08), 0 0 50px rgba(0,245,255,0.18);
-}
-
-.search-box input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  color: #fff;
-  font-family: 'Space Mono', monospace;
-  font-size: 14px;
-  padding: 10px 0;
-  caret-color: var(--teal);
-}
-
-.search-box input::placeholder { color: rgba(255,255,255,0.38); }
-
-.go-btn {
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #00f5ff, #00b4d8);
-  color: #020e10;
-  border: none;
-  border-radius: 9px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 2px;
-  padding: 12px 24px;
-  cursor: pointer;
-  transition: opacity 0.15s, box-shadow 0.15s, transform 0.1s;
-}
-
-.go-btn:hover {
-  opacity: 0.85;
-  box-shadow: 0 0 28px rgba(0,245,255,0.5);
-}
-
-.go-btn:active { transform: scale(0.96); }
-
-.search-hint {
-  margin-top: 13px;
-  text-align: center;
-  font-size: 11px;
-  letter-spacing: 1px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.55), rgba(0,245,255,0.8));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.btn:hover { opacity:.85; box-shadow:0 0 26px rgba(0,245,255,.5); }
+.btn:active { transform:scale(.96); }
+.hint {
+  margin-top:12px; text-align:center; font-size:10px; letter-spacing:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(0,245,255,.8));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 
 /* STATUS */
 .status {
-  margin-top: 34px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 11px;
-  letter-spacing: 3px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(0,245,255,0.9));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: fadeUp 0.9s 0.25s cubic-bezier(0.16,1,0.3,1) both;
+  margin-top:30px; display:flex; align-items:center; gap:8px; font-size:10px; letter-spacing:3px;
+  background:linear-gradient(90deg,rgba(255,255,255,.6),rgba(0,245,255,.9));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:up .9s .25s cubic-bezier(.16,1,.3,1) both;
 }
+.dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; background:linear-gradient(135deg,#00f5ff,#00b4d8); box-shadow:0 0 8px var(--teal); animation:pulse 2.2s ease-in-out infinite; }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #00f5ff, #00b4d8);
-  box-shadow: 0 0 10px var(--teal);
-  animation: pulse 2.2s ease-in-out infinite;
+/* BOTTOM SEARCH BAR (shown inside proxy iframe) */
+.bottom-bar {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  padding:10px 16px;
+  background:linear-gradient(180deg, transparent 0%, rgba(2,14,16,0.95) 100%);
+  backdrop-filter:blur(12px);
+  border-top:1px solid rgba(0,245,255,0.12);
+  display:none; /* shown after first search */
+  align-items:center;
+  gap:10px;
+}
+.bottom-bar .sbox { flex:1; padding:4px 4px 4px 14px; border-radius:10px; }
+.bottom-bar .sbox input { font-size:13px; padding:8px 0; }
+.bottom-bar .btn { padding:9px 18px; font-size:11px; }
+.back-btn {
+  flex-shrink:0; background:rgba(0,245,255,0.1); color:var(--teal);
+  border:1px solid rgba(0,245,255,0.25); border-radius:8px;
+  font-family:'Space Mono',monospace; font-size:11px; padding:9px 14px;
+  cursor:pointer; transition:background .15s;
+  white-space:nowrap;
+}
+.back-btn:hover { background:rgba(0,245,255,0.18); }
+
+/* PROXY FRAME */
+#frame {
+  position:fixed; inset:0; z-index:50;
+  border:none; width:100%; height:calc(100% - 53px);
+  display:none;
 }
 
 /* CREDITS */
 .credits {
-  position: fixed;
-  bottom: 16px;
-  right: 20px;
-  z-index: 20;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(0,245,255,0.8));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  cursor: default;
+  position:fixed; bottom:16px; right:20px; z-index:200; font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  background:linear-gradient(90deg,rgba(255,255,255,.45),rgba(0,245,255,.75));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  cursor:default;
 }
 
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(22px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-@keyframes pulse {
-  0%,100% { opacity:1; transform:scale(1); }
-  50%      { opacity:0.35; transform:scale(0.72); }
-}
-
+@keyframes up { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.72)} }
 </style>
 </head>
 <body>
 
 <canvas id="bg"></canvas>
-<div class="gradient-bg"></div>
+<div class="gbg"></div>
 <div class="grid"></div>
-<div class="vignette"></div>
+<div class="vig"></div>
+<div class="c tl"></div><div class="c tr"></div><div class="c bl"></div><div class="c br"></div>
 
-<div class="corner tl"></div>
-<div class="corner tr"></div>
-<div class="corner bl"></div>
-<div class="corner br"></div>
-
-<div class="stage">
-
-  <div class="logo-wrap">
-    <div class="logo-icon">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="32" r="28" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>
-        <circle cx="32" cy="32" r="18" stroke="#00f5ff" stroke-width="1" opacity="0.7"/>
-        <circle cx="32" cy="32" r="5" fill="#00f5ff"/>
-        <line x1="32" y1="4"  x2="32" y2="14" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="32" y1="50" x2="32" y2="60" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="4"  y1="32" x2="14" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="50" y1="32" x2="60" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div class="logo-title">BosProxy</div>
-    <div class="logo-sub">Browse freely &mdash; stay hidden</div>
+<!-- MAIN UI -->
+<div class="stage" id="home">
+  <div class="logo">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="28" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="4 3" opacity=".5"/>
+      <circle cx="32" cy="32" r="18" stroke="#00f5ff" stroke-width="1" opacity=".7"/>
+      <circle cx="32" cy="32" r="5" fill="#00f5ff"/>
+      <line x1="32" y1="4"  x2="32" y2="14" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="32" y1="50" x2="32" y2="60" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="4"  y1="32" x2="14" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="50" y1="32" x2="60" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <h1>BosProxy</h1>
+    <p>Browse freely &mdash; stay hidden</p>
   </div>
 
-  <div class="search-wrap">
-    <div class="search-box">
-      <input id="urlInput" type="text" placeholder="Search or enter a URL..." autocomplete="off" spellcheck="false">
-      <button class="go-btn" onclick="go()">GO</button>
+  <div class="search">
+    <div class="sbox">
+      <input id="mainInput" type="text" placeholder="Search or enter a URL..." autocomplete="off" spellcheck="false">
+      <button class="btn" onclick="go('mainInput')">GO</button>
     </div>
-    <div class="search-hint">Press Enter or click GO &mdash; any site or search query</div>
+    <div class="hint">Press Enter or click GO &mdash; any site or search query</div>
   </div>
 
   <div class="status">
     <div class="dot"></div>
     <span>PROXY ONLINE</span>
   </div>
+</div>
 
+<!-- PROXY IFRAME -->
+<iframe id="frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+
+<!-- BOTTOM BAR (appears after first search) -->
+<div class="bottom-bar" id="bottomBar">
+  <button class="back-btn" onclick="goHome()">&#8592; Home</button>
+  <div class="sbox">
+    <input id="barInput" type="text" placeholder="Search or enter a URL..." autocomplete="off" spellcheck="false">
+    <button class="btn" onclick="go('barInput')">GO</button>
+  </div>
 </div>
 
 <div class="credits">Site made by bo</div>
@@ -303,10 +186,7 @@ canvas {
 <script>
 const BACKEND = "https://riders-isaac-shipped-july.trycloudflare.com";
 
-function go() {
-  let input = document.getElementById("urlInput").value.trim();
-  if (!input) return;
-
+function buildUrl(input) {
   let url;
   if (input.startsWith("http://") || input.startsWith("https://")) {
     url = input;
@@ -315,69 +195,69 @@ function go() {
   } else {
     url = "https://www.google.com/search?q=" + encodeURIComponent(input);
   }
-
-  try {
-    const encoded = __uv$config.encodeUrl(url);
-    window.location.href = BACKEND + __uv$config.prefix + encoded;
-  } catch(e) {
-    window.location.href = BACKEND + "/service/" + encodeURIComponent(url);
-  }
+  return url;
 }
 
-document.getElementById("urlInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") go();
-});
+function go(inputId) {
+  const raw = document.getElementById(inputId).value.trim();
+  if (!raw) return;
+  const url = buildUrl(raw);
+  const frame = document.getElementById("frame");
+  const home = document.getElementById("home");
+  const bar = document.getElementById("bottomBar");
+
+  // Send to backend
+  frame.src = BACKEND + "/service/?url=" + encodeURIComponent(url);
+  frame.style.display = "block";
+  home.style.display = "none";
+  bar.style.display = "flex";
+  document.getElementById("barInput").value = raw;
+}
+
+function goHome() {
+  document.getElementById("frame").style.display = "none";
+  document.getElementById("frame").src = "";
+  document.getElementById("home").style.display = "flex";
+  document.getElementById("bottomBar").style.display = "none";
+  document.getElementById("mainInput").value = "";
+}
+
+// Enter key support
+document.getElementById("mainInput").addEventListener("keydown", e => { if(e.key==="Enter") go("mainInput"); });
+document.getElementById("barInput").addEventListener("keydown", e => { if(e.key==="Enter") go("barInput"); });
 
 // PARTICLES
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
-
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+function resize() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 resize();
 window.addEventListener("resize", resize);
 
 const particles = [];
-for (let i = 0; i < 150; i++) {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    size: Math.random() * 1.6 + 0.3,
-    speed: Math.random() * 0.45 + 0.12,
-    opacity: Math.random() * 0.55 + 0.15
-  });
+for (let i=0; i<150; i++) {
+  particles.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*1.6+.3, speed:Math.random()*.45+.12, opacity:Math.random()*.55+.15 });
 }
 
-let mx = -999, my = -999;
-window.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; });
+let mx=-999, my=-999;
+window.addEventListener("mousemove", e => { mx=e.clientX; my=e.clientY; });
 
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   for (const p of particles) {
-    const dx = p.x - mx, dy = p.y - my;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist < 90) {
-      p.x += (dx / dist) * 0.4;
-      p.y += (dy / dist) * 0.4;
-    }
-    p.y -= p.speed;
-    if (p.y < -4) {
-      p.y = canvas.height + 4;
-      p.x = Math.random() * canvas.width;
-    }
-    ctx.globalAlpha = p.opacity;
-    ctx.fillStyle = "#00f5ff";
+    const dx=p.x-mx, dy=p.y-my, dist=Math.sqrt(dx*dx+dy*dy);
+    if (dist<90) { p.x+=(dx/dist)*.4; p.y+=(dy/dist)*.4; }
+    p.y-=p.speed;
+    if (p.y<-4) { p.y=canvas.height+4; p.x=Math.random()*canvas.width; }
+    ctx.globalAlpha=p.opacity;
+    ctx.fillStyle="#00f5ff";
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
     ctx.fill();
   }
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha=1;
   requestAnimationFrame(animate);
 }
 animate();
 </script>
-
 </body>
 </html>
