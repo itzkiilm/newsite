@@ -2,185 +2,376 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bos Proxy</title>
-
-<script src="/uv/uv.bundle.js"></script>
-<script src="/uv/uv.config.js"></script>
-
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 
-body{
-margin:0;
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#031a1f;
-font-family:Arial;
-color:white;
-overflow:hidden;
+:root {
+  --teal: #00f5ff;
+  --teal-dim: rgba(0,245,255,0.12);
+  --teal-mid: rgba(0,245,255,0.4);
+  --bg: #020e10;
+  --bg2: #041418;
+  --text: #e0fdff;
+  --muted: rgba(224,253,255,0.4);
 }
 
-canvas{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:-1;
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  overflow: hidden;
 }
 
-.container{
-text-align:center;
+/* ── CANVAS ── */
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
 }
 
-h1{
-font-size:48px;
-margin-bottom:25px;
+/* ── GRID OVERLAY ── */
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
 }
 
-.searchbox{
-display:flex;
-justify-content:center;
+/* ── VIGNETTE ── */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(ellipse at center, transparent 40%, #020e10 100%);
+  pointer-events: none;
 }
 
-input{
-width:420px;
-padding:12px;
-border-radius:10px;
-border:none;
-background:#062c33;
-color:white;
-font-size:16px;
-outline:none;
+/* ── MAIN LAYOUT ── */
+.stage {
+  position: relative;
+  z-index: 10;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
 }
 
-button{
-margin-left:10px;
-padding:12px 18px;
-border:none;
-border-radius:10px;
-background:#00e5ff;
-font-weight:bold;
-cursor:pointer;
+/* ── LOGO AREA ── */
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48px;
+  animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
 }
 
-button:hover{
-background:#00c7dd;
+.logo-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  position: relative;
 }
 
-.credit{
-position:fixed;
-bottom:10px;
-right:15px;
-font-size:14px;
-opacity:0.7;
+.logo-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 18px var(--teal));
+}
+
+.logo-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text);
+  line-height: 1;
+}
+
+.logo-title span {
+  color: var(--teal);
+  text-shadow: 0 0 30px var(--teal);
+}
+
+.logo-sub {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ── SEARCH ── */
+.search-wrap {
+  width: min(520px, 90vw);
+  animation: fadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,245,255,0.25);
+  border-radius: 14px;
+  padding: 6px 6px 6px 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(12px);
+}
+
+.search-box:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.1), 0 0 40px rgba(0,245,255,0.15);
+}
+
+.search-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  padding: 10px 0;
+  caret-color: var(--teal);
+}
+
+.search-box input::placeholder {
+  color: var(--muted);
+}
+
+.go-btn {
+  flex-shrink: 0;
+  background: var(--teal);
+  color: #020e10;
+  border: none;
+  border-radius: 9px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.go-btn:hover {
+  background: #40faff;
+  box-shadow: 0 0 24px rgba(0,245,255,0.5);
+}
+
+.go-btn:active { transform: scale(0.96); }
+
+.search-hint {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* ── STATUS DOT ── */
+.status {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  animation: fadeUp 0.8s 0.3s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── CREDITS ── */
+.credits {
+  position: fixed;
+  bottom: 16px;
+  right: 20px;
+  z-index: 20;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  cursor: default;
+}
+
+.credits:hover { color: var(--teal); }
+
+/* ── CORNER DECO ── */
+.corner {
+  position: fixed;
+  z-index: 5;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+}
+.corner.tl { top: 20px; left: 20px; border-top: 1px solid rgba(0,245,255,0.2); border-left: 1px solid rgba(0,245,255,0.2); }
+.corner.tr { top: 20px; right: 20px; border-top: 1px solid rgba(0,245,255,0.2); border-right: 1px solid rgba(0,245,255,0.2); }
+.corner.bl { bottom: 20px; left: 20px; border-bottom: 1px solid rgba(0,245,255,0.2); border-left: 1px solid rgba(0,245,255,0.2); }
+.corner.br { bottom: 20px; right: 20px; border-bottom: 1px solid rgba(0,245,255,0.2); border-right: 1px solid rgba(0,245,255,0.2); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; transform: scale(1); }
+  50%      { opacity:0.5; transform: scale(0.8); }
 }
 
 </style>
 </head>
-
 <body>
 
 <canvas id="bg"></canvas>
+<div class="grid"></div>
+<div class="vignette"></div>
 
-<div class="container">
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
 
-<h1>Bos Proxy</h1>
+<div class="stage">
 
-<div class="searchbox">
-<input id="urlInput" placeholder="Search the web or enter URL">
-<button onclick="go()">Go</button>
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="28" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
+        <circle cx="32" cy="32" r="18" stroke="#00f5ff" stroke-width="1" opacity="0.6"/>
+        <circle cx="32" cy="32" r="5" fill="#00f5ff"/>
+        <line x1="32" y1="4" x2="32" y2="14" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="32" y1="50" x2="32" y2="60" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4" y1="32" x2="14" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="50" y1="32" x2="60" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="logo-title">Bos<span>Proxy</span></div>
+    <div class="logo-sub">Browse freely &mdash; stay hidden</div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <input id="urlInput" type="text" placeholder="Search or enter a URL..." autocomplete="off" spellcheck="false">
+      <button class="go-btn" onclick="go()">GO</button>
+    </div>
+    <div class="search-hint">Press Enter or click GO &mdash; supports any site or search query</div>
+  </div>
+
+  <div class="status">
+    <div class="dot"></div>
+    <span>PROXY ONLINE</span>
+  </div>
+
 </div>
 
-</div>
-
-<div class="credit">Site made by bo</div>
+<div class="credits">Site made by bo</div>
 
 <script>
+// ── BACKEND ──
+const BACKEND = "https://greeting-injection-avon-ons.trycloudflare.com";
 
-/* register ultraviolet service worker */
+// ── SEARCH ──
+function go() {
+  let input = document.getElementById("urlInput").value.trim();
+  if (!input) return;
 
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/' });}
+  let url;
+  if (input.startsWith("http://") || input.startsWith("https://")) {
+    url = input;
+  } else if (input.includes(".") && !input.includes(" ")) {
+    url = "https://" + input;
+  } else {
+    url = "https://www.google.com/search?q=" + encodeURIComponent(input);
+  }
 
-/* search */
-
-function go(){
-
-let input = document.getElementById("urlInput").value.trim()
-
-if(!input) return
-
-let url
-
-if(input.startsWith("http://") || input.startsWith("https://")){
-url = input
-}
-else if(input.includes(".")){
-url = "https://" + input
-}
-else{
-url = "https://www.google.com/search?q=" + encodeURIComponent(input)
+  window.location.href = BACKEND + "/service/?url=" + encodeURIComponent(url);
 }
 
-const encoded = __uv$config.encodeUrl(url)
+document.getElementById("urlInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") go();
+});
 
-location.href = __uv$config.prefix + encoded
+// ── PARTICLES ──
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
 
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const COUNT = 160;
+const particles = [];
+
+for (let i = 0; i < COUNT; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: Math.random() * 1.8 + 0.3,
+    speed: Math.random() * 0.5 + 0.15,
+    opacity: Math.random() * 0.6 + 0.2
+  });
 }
 
-document.getElementById("urlInput").addEventListener("keydown", function(e){
-if(e.key === "Enter"){
-go()
-}
-})
+// subtle mouse repel
+let mx = -999, my = -999;
+window.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; });
 
-/* particle background */
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-const canvas = document.getElementById("bg")
-const ctx = canvas.getContext("2d")
+  for (const p of particles) {
+    // mouse repel
+    const dx = p.x - mx, dy = p.y - my;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 100) {
+      p.x += (dx / dist) * 0.5;
+      p.y += (dy / dist) * 0.5;
+    }
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+    p.y -= p.speed;
+    if (p.y < -5) {
+      p.y = canvas.height + 5;
+      p.x = Math.random() * canvas.width;
+    }
 
-let particles=[]
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = "#00f5ff";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
-for(let i=0;i<120;i++){
-particles.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-size:Math.random()*2+1,
-speed:Math.random()*0.6+0.2
-})
-}
-
-function animate(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-particles.forEach(p=>{
-
-p.y-=p.speed
-
-if(p.y<0){
-p.y=canvas.height
-p.x=Math.random()*canvas.width
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(animate);
 }
 
-ctx.fillStyle="#00e5ff"
-ctx.beginPath()
-ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
-ctx.fill()
-
-})
-
-requestAnimationFrame(animate)
-
-}
-
-animate()
-
+animate();
 </script>
 
 </body>
