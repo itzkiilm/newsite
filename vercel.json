@@ -1,0 +1,5 @@
+{
+  "routes": [
+    { "src": "/service/(.*)", "dest": "/api/uv" }
+  ]
+}
