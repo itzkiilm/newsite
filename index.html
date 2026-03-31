@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Bos Proxy</title>
@@ -15,10 +15,19 @@ height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-background:#02161a;
+background:#031a1f;
 font-family:Arial;
 color:white;
 overflow:hidden;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
 }
 
 .container{
@@ -27,7 +36,7 @@ text-align:center;
 
 h1{
 font-size:48px;
-margin-bottom:20px;
+margin-bottom:25px;
 }
 
 .searchbox{
@@ -40,7 +49,7 @@ width:420px;
 padding:12px;
 border-radius:10px;
 border:none;
-background:#053038;
+background:#062c33;
 color:white;
 font-size:16px;
 outline:none;
@@ -56,6 +65,10 @@ font-weight:bold;
 cursor:pointer;
 }
 
+button:hover{
+background:#00c7dd;
+}
+
 .credit{
 position:fixed;
 bottom:10px;
@@ -68,6 +81,8 @@ opacity:0.7;
 </head>
 
 <body>
+
+<canvas id="bg"></canvas>
 
 <div class="container">
 
@@ -83,6 +98,14 @@ opacity:0.7;
 <div class="credit">Site made by bo</div>
 
 <script>
+
+/* register ultraviolet service worker */
+
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('/uv/uv.sw.js');
+}
+
+/* search */
 
 function go(){
 
@@ -109,12 +132,55 @@ location.href = __uv$config.prefix + encoded
 }
 
 document.getElementById("urlInput").addEventListener("keydown", function(e){
-
 if(e.key === "Enter"){
 go()
 }
+})
+
+/* particle background */
+
+const canvas = document.getElementById("bg")
+const ctx = canvas.getContext("2d")
+
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+let particles=[]
+
+for(let i=0;i<120;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2+1,
+speed:Math.random()*0.6+0.2
+})
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+particles.forEach(p=>{
+
+p.y-=p.speed
+
+if(p.y<0){
+p.y=canvas.height
+p.x=Math.random()*canvas.width
+}
+
+ctx.fillStyle="#00e5ff"
+ctx.beginPath()
+ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
+ctx.fill()
 
 })
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
 
 </script>
 
