@@ -109,16 +109,17 @@ let input = document.getElementById("urlInput").value.trim();
 let url;
 
 if(input.startsWith("http://") || input.startsWith("https://")){
-url = input;
+  url = input;
 }
 else if(input.includes(".")){
-url = "https://" + input;
+  url = "https://" + input;
 }
 else{
-url = "https://www.google.com/search?q=" + encodeURIComponent(input);
+  url = "https://www.google.com/search?q=" + encodeURIComponent(input);
 }
 
-window.location.href = "/service/" + encodeURIComponent(url);
+const encoded = __uv$config.encodeUrl(url);
+window.location.href = __uv$config.prefix + encoded;
 
 });
 
