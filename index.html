@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bos Proxy</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<!-- Ultraviolet client loaded from your PC backend -->
+<script src="https://riders-isaac-shipped-july.trycloudflare.com/uv/uv.bundle.js"></script>
+<script src="https://riders-isaac-shipped-july.trycloudflare.com/uv/uv.config.js"></script>
+
 <style>
 
 :root {
   --teal: #00f5ff;
-  --teal-dim: rgba(0,245,255,0.12);
-  --teal-mid: rgba(0,245,255,0.4);
+  --teal2: #00b4d8;
   --bg: #020e10;
-  --bg2: #041418;
-  --text: #e0fdff;
-  --muted: rgba(224,253,255,0.4);
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -22,40 +23,59 @@
 html, body {
   height: 100%;
   background: var(--bg);
-  color: var(--text);
+  color: #fff;
   font-family: 'Space Mono', monospace;
   overflow: hidden;
 }
 
-/* ── CANVAS ── */
 canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
 }
 
-/* ── GRID OVERLAY ── */
+.gradient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,180,216,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,245,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 .grid {
   position: fixed;
   inset: 0;
   z-index: 1;
   background-image:
-    linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(0,245,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.025) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
 }
 
-/* ── VIGNETTE ── */
 .vignette {
   position: fixed;
   inset: 0;
   z-index: 2;
-  background: radial-gradient(ellipse at center, transparent 40%, #020e10 100%);
+  background: radial-gradient(ellipse at center, transparent 35%, #020e10 100%);
   pointer-events: none;
 }
 
-/* ── MAIN LAYOUT ── */
+.corner {
+  position: fixed;
+  z-index: 5;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  opacity: 0.3;
+}
+.corner.tl { top:20px; left:20px; border-top:1px solid var(--teal); border-left:1px solid var(--teal); }
+.corner.tr { top:20px; right:20px; border-top:1px solid var(--teal); border-right:1px solid var(--teal); }
+.corner.bl { bottom:20px; left:20px; border-bottom:1px solid var(--teal); border-left:1px solid var(--teal); }
+.corner.br { bottom:20px; right:20px; border-bottom:1px solid var(--teal); border-right:1px solid var(--teal); }
+
 .stage {
   position: relative;
   z-index: 10;
@@ -64,74 +84,73 @@ canvas {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
 }
 
-/* ── LOGO AREA ── */
+/* LOGO */
 .logo-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 48px;
-  animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+  margin-bottom: 52px;
+  animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) both;
 }
 
 .logo-icon {
-  width: 64px;
-  height: 64px;
-  margin-bottom: 18px;
-  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
 }
 
 .logo-icon svg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 18px var(--teal));
+  filter: drop-shadow(0 0 22px rgba(0,245,255,0.85));
 }
 
 .logo-title {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(36px, 6vw, 64px);
+  font-size: clamp(40px, 6vw, 68px);
   font-weight: 800;
   letter-spacing: -1px;
-  color: var(--text);
   line-height: 1;
-}
-
-.logo-title span {
-  color: var(--teal);
-  text-shadow: 0 0 30px var(--teal);
+  background: linear-gradient(135deg, #ffffff 0%, #00f5ff 55%, #00b4d8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 28px rgba(0,245,255,0.35));
 }
 
 .logo-sub {
-  margin-top: 10px;
+  margin-top: 13px;
   font-size: 11px;
   letter-spacing: 4px;
-  color: var(--muted);
   text-transform: uppercase;
+  background: linear-gradient(90deg, #00b4d8, #00f5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* ── SEARCH ── */
+/* SEARCH */
 .search-wrap {
-  width: min(520px, 90vw);
-  animation: fadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+  width: min(540px, 90vw);
+  animation: fadeUp 0.9s 0.12s cubic-bezier(0.16,1,0.3,1) both;
 }
 
 .search-box {
-  position: relative;
   display: flex;
   align-items: center;
-  background: var(--teal-dim);
-  border: 1px solid rgba(0,245,255,0.25);
+  background: linear-gradient(135deg, rgba(0,245,255,0.07), rgba(0,180,216,0.12));
+  border: 1px solid rgba(0,245,255,0.3);
   border-radius: 14px;
   padding: 6px 6px 6px 20px;
   transition: border-color 0.2s, box-shadow 0.2s;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
 }
 
 .search-box:focus-within {
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(0,245,255,0.1), 0 0 40px rgba(0,245,255,0.15);
+  border-color: rgba(0,245,255,0.8);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.08), 0 0 50px rgba(0,245,255,0.18);
 }
 
 .search-box input {
@@ -139,106 +158,97 @@ canvas {
   background: none;
   border: none;
   outline: none;
-  color: var(--text);
+  color: #fff;
   font-family: 'Space Mono', monospace;
   font-size: 14px;
   padding: 10px 0;
   caret-color: var(--teal);
 }
 
-.search-box input::placeholder {
-  color: var(--muted);
-}
+.search-box input::placeholder { color: rgba(255,255,255,0.38); }
 
 .go-btn {
   flex-shrink: 0;
-  background: var(--teal);
+  background: linear-gradient(135deg, #00f5ff, #00b4d8);
   color: #020e10;
   border: none;
   border-radius: 9px;
   font-family: 'Syne', sans-serif;
   font-weight: 800;
   font-size: 13px;
-  letter-spacing: 1px;
-  padding: 12px 22px;
+  letter-spacing: 2px;
+  padding: 12px 24px;
   cursor: pointer;
-  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: opacity 0.15s, box-shadow 0.15s, transform 0.1s;
 }
 
 .go-btn:hover {
-  background: #40faff;
-  box-shadow: 0 0 24px rgba(0,245,255,0.5);
+  opacity: 0.85;
+  box-shadow: 0 0 28px rgba(0,245,255,0.5);
 }
 
 .go-btn:active { transform: scale(0.96); }
 
 .search-hint {
-  margin-top: 12px;
+  margin-top: 13px;
   text-align: center;
   font-size: 11px;
-  color: var(--muted);
   letter-spacing: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.55), rgba(0,245,255,0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* ── STATUS DOT ── */
+/* STATUS */
 .status {
-  margin-top: 32px;
+  margin-top: 34px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 2px;
-  animation: fadeUp 0.8s 0.3s cubic-bezier(0.16,1,0.3,1) both;
+  letter-spacing: 3px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(0,245,255,0.9));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeUp 0.9s 0.25s cubic-bezier(0.16,1,0.3,1) both;
 }
 
 .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--teal);
-  box-shadow: 0 0 8px var(--teal);
-  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #00f5ff, #00b4d8);
+  box-shadow: 0 0 10px var(--teal);
+  animation: pulse 2.2s ease-in-out infinite;
 }
 
-/* ── CREDITS ── */
+/* CREDITS */
 .credits {
   position: fixed;
   bottom: 16px;
   right: 20px;
   z-index: 20;
   font-size: 11px;
-  color: var(--muted);
   letter-spacing: 2px;
   text-transform: uppercase;
-  transition: color 0.2s;
+  background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(0,245,255,0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   cursor: default;
 }
 
-.credits:hover { color: var(--teal); }
-
-/* ── CORNER DECO ── */
-.corner {
-  position: fixed;
-  z-index: 5;
-  width: 80px;
-  height: 80px;
-  pointer-events: none;
-}
-.corner.tl { top: 20px; left: 20px; border-top: 1px solid rgba(0,245,255,0.2); border-left: 1px solid rgba(0,245,255,0.2); }
-.corner.tr { top: 20px; right: 20px; border-top: 1px solid rgba(0,245,255,0.2); border-right: 1px solid rgba(0,245,255,0.2); }
-.corner.bl { bottom: 20px; left: 20px; border-bottom: 1px solid rgba(0,245,255,0.2); border-left: 1px solid rgba(0,245,255,0.2); }
-.corner.br { bottom: 20px; right: 20px; border-bottom: 1px solid rgba(0,245,255,0.2); border-right: 1px solid rgba(0,245,255,0.2); }
-
-/* ── ANIMATIONS ── */
 @keyframes fadeUp {
-  from { opacity:0; transform: translateY(24px); }
-  to   { opacity:1; transform: translateY(0); }
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 
 @keyframes pulse {
-  0%,100% { opacity:1; transform: scale(1); }
-  50%      { opacity:0.5; transform: scale(0.8); }
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.35; transform:scale(0.72); }
 }
 
 </style>
@@ -246,6 +256,7 @@ canvas {
 <body>
 
 <canvas id="bg"></canvas>
+<div class="gradient-bg"></div>
 <div class="grid"></div>
 <div class="vignette"></div>
 
@@ -259,16 +270,16 @@ canvas {
   <div class="logo-wrap">
     <div class="logo-icon">
       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="32" r="28" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
-        <circle cx="32" cy="32" r="18" stroke="#00f5ff" stroke-width="1" opacity="0.6"/>
+        <circle cx="32" cy="32" r="28" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>
+        <circle cx="32" cy="32" r="18" stroke="#00f5ff" stroke-width="1" opacity="0.7"/>
         <circle cx="32" cy="32" r="5" fill="#00f5ff"/>
-        <line x1="32" y1="4" x2="32" y2="14" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="32" y1="4"  x2="32" y2="14" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="32" y1="50" x2="32" y2="60" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="4" y1="32" x2="14" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4"  y1="32" x2="14" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="50" y1="32" x2="60" y2="32" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
     </div>
-    <div class="logo-title">Bos<span>Proxy</span></div>
+    <div class="logo-title">BosProxy</div>
     <div class="logo-sub">Browse freely &mdash; stay hidden</div>
   </div>
 
@@ -277,7 +288,7 @@ canvas {
       <input id="urlInput" type="text" placeholder="Search or enter a URL..." autocomplete="off" spellcheck="false">
       <button class="go-btn" onclick="go()">GO</button>
     </div>
-    <div class="search-hint">Press Enter or click GO &mdash; supports any site or search query</div>
+    <div class="search-hint">Press Enter or click GO &mdash; any site or search query</div>
   </div>
 
   <div class="status">
@@ -290,10 +301,8 @@ canvas {
 <div class="credits">Site made by bo</div>
 
 <script>
-// ── BACKEND ──
 const BACKEND = "https://riders-isaac-shipped-july.trycloudflare.com";
 
-// ── SEARCH ──
 function go() {
   let input = document.getElementById("urlInput").value.trim();
   if (!input) return;
@@ -307,14 +316,19 @@ function go() {
     url = "https://www.google.com/search?q=" + encodeURIComponent(input);
   }
 
-  window.location.href = BACKEND + "/service/" + encodeURIComponent(url);
+  try {
+    const encoded = __uv$config.encodeUrl(url);
+    window.location.href = BACKEND + __uv$config.prefix + encoded;
+  } catch(e) {
+    window.location.href = BACKEND + "/service/" + encodeURIComponent(url);
+  }
 }
 
 document.getElementById("urlInput").addEventListener("keydown", e => {
   if (e.key === "Enter") go();
 });
 
-// ── PARTICLES ──
+// PARTICLES
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
@@ -325,52 +339,43 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-const COUNT = 160;
 const particles = [];
-
-for (let i = 0; i < COUNT; i++) {
+for (let i = 0; i < 150; i++) {
   particles.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    size: Math.random() * 1.8 + 0.3,
-    speed: Math.random() * 0.5 + 0.15,
-    opacity: Math.random() * 0.6 + 0.2
+    size: Math.random() * 1.6 + 0.3,
+    speed: Math.random() * 0.45 + 0.12,
+    opacity: Math.random() * 0.55 + 0.15
   });
 }
 
-// subtle mouse repel
 let mx = -999, my = -999;
 window.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; });
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   for (const p of particles) {
-    // mouse repel
     const dx = p.x - mx, dy = p.y - my;
     const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist < 100) {
-      p.x += (dx / dist) * 0.5;
-      p.y += (dy / dist) * 0.5;
+    if (dist < 90) {
+      p.x += (dx / dist) * 0.4;
+      p.y += (dy / dist) * 0.4;
     }
-
     p.y -= p.speed;
-    if (p.y < -5) {
-      p.y = canvas.height + 5;
+    if (p.y < -4) {
+      p.y = canvas.height + 4;
       p.x = Math.random() * canvas.width;
     }
-
     ctx.globalAlpha = p.opacity;
     ctx.fillStyle = "#00f5ff";
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     ctx.fill();
   }
-
   ctx.globalAlpha = 1;
   requestAnimationFrame(animate);
 }
-
 animate();
 </script>
 
